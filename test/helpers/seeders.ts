@@ -1,6 +1,14 @@
 import { Battlesnake, Coord, GameState } from "../../src/snake/types/types";
 
-export const createGameState = (snake: Battlesnake, enemySnakes?: Battlesnake[]): GameState => {
+interface GameStateExtensions {
+  enemySnakes?: Battlesnake[];
+  food?: Coord[];
+}
+
+export const createGameState = (
+  snake: Battlesnake,
+  extensions?: GameStateExtensions,
+): GameState => {
   return {
     game: {
       id: "",
@@ -31,8 +39,8 @@ export const createGameState = (snake: Battlesnake, enemySnakes?: Battlesnake[])
     board: {
       height: 11,
       width: 11,
-      food: [],
-      snakes: [snake, ...(enemySnakes ? enemySnakes : [])],
+      food: [...(extensions && extensions.food ? extensions.food : [])],
+      snakes: [snake, ...(extensions && extensions.enemySnakes ? extensions.enemySnakes : [])],
       hazards: [],
     },
     you: snake,

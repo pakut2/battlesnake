@@ -29,7 +29,7 @@ export class Move {
     const boardWidth = this.gameState.board.width;
     const boardHeight = this.gameState.board.height;
 
-    if (snakeHead.x === boardWidth - 1) {
+    if (snakeHead.x + 1 === boardWidth) {
       this.validMoves.right = false;
     }
 
@@ -37,7 +37,7 @@ export class Move {
       this.validMoves.left = false;
     }
 
-    if (snakeHead.y === boardHeight - 1) {
+    if (snakeHead.y + 1 === boardHeight) {
       this.validMoves.up = false;
     }
 

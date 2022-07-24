@@ -101,3 +101,16 @@ export type Direction = "up" | "down" | "left" | "right";
 export interface CoordsFromPoint extends Coord {
   direction: Direction;
 }
+
+// interface Node {
+//   location: Coord;
+//   g?: number;
+//   h?: number;
+//   f?: number;
+//   parent?: Node;
+// }
+
+interface DirectionWithPath {
+  direction: Direction;
+  path: Coord[];
+}

@@ -248,7 +248,7 @@ describe("Move", () => {
         { x: 2, y: 4 },
         { x: 2, y: 3 },
       ]);
-      const gameState = createGameState(snake, [enemySnake]);
+      const gameState = createGameState(snake, { enemySnakes: [enemySnake] });
       const move = new Move();
 
       const moveResponse = move.possibleMoves(gameState);
