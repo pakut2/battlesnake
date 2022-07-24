@@ -11,6 +11,4 @@ describe("Food", () => {
       expect(closestFood).toEqual({ x: 2, y: 5 });
     });
   });
-
-  // The same distance
 });

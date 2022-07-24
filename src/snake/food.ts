@@ -1,8 +1,8 @@
 import { Coord } from "./types/types";
-import { shortestDistance } from "./utils";
+import { closestTarget } from "./utils";
 
 export class Food {
   public static closestFood(snakeHead: Coord, foods: Coord[]): Coord {
-    return shortestDistance(snakeHead, foods);
+    return closestTarget(snakeHead, foods);
   }
 }
