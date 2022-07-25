@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
+import { Food } from "./food";
 import { Move } from "./move";
-import { Direction, GameState, InfoResponse, ValidMoves } from "./types/types";
+import { Direction, GameState, InfoResponse } from "./types/types";
 
 @Injectable()
 export class SnakeService {
@@ -17,15 +18,20 @@ export class SnakeService {
   }
 
   public makeMove(gameState: GameState): Direction {
-    const safeMoves = this.move.possibleMoves(gameState);
-    const safeMovesKeys = Object.keys(safeMoves).filter(
-      (key) => safeMoves[key as keyof ValidMoves],
-    );
+    const snakeHead = gameState.you.head;
+    const availableFood = gameState.board.food;
 
-    if (gameState.board.food.length) {
-      return this.move.pathToClosestFood(gameState).direction;
+    if (availableFood.length) {
+      const closestFoodLocation = Food.closestFood(snakeHead, availableFood);
+      const path = this.move.shortestPathToTarget(gameState, snakeHead, closestFoodLocation);
+
+      if (!path) {
+        return this.move.survivalMode(gameState);
+      }
+
+      return path.direction;
     } else {
-      return safeMovesKeys[Math.floor(Math.random() * safeMovesKeys.length)] as Direction;
+      return this.move.survivalMode(gameState);
     }
   }
 }

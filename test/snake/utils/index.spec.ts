@@ -2,12 +2,15 @@ import {
   closestTarget,
   containsCell,
   getDirection,
+  getEmptyCells,
+  getTakenCells,
   isCellBlocked,
   isCellInBounds,
   manhattanDistance,
   moveSnake,
 } from "../../../src/snake/utils";
 import { createBattlesnake, createGameState } from "../../helpers/seeders";
+import { isEqual } from "lodash";
 
 describe("getDirection", () => {
   it("should return up when neighbour is above the head", () => {
@@ -195,5 +198,57 @@ describe("moveSnake", () => {
     expect(result.you.head).toEqual(headLocation);
     expect(result.you.body[0]).toEqual(snakeBody[0]);
     expect(result.you.body[result.you.body.length - 1]).toEqual(snakeBody[snakeBody.length - 1]);
+  });
+});
+
+describe("getTakenCells", () => {
+  it("should return cells taken by snakes", () => {
+    const snake = createBattlesnake("snake", [
+      { x: 10, y: 3 },
+      { x: 10, y: 4 },
+      { x: 10, y: 5 },
+    ]);
+    const enemy = createBattlesnake("enemy", [
+      { x: 9, y: 3 },
+      { x: 9, y: 4 },
+      { x: 9, y: 5 },
+    ]);
+    const gameState = createGameState(snake, { enemySnakes: [enemy] });
+
+    const result = getTakenCells(gameState);
+
+    expect(result).toEqual([
+      { x: 10, y: 3 },
+      { x: 10, y: 4 },
+      { x: 10, y: 5 },
+      { x: 9, y: 3 },
+      { x: 9, y: 4 },
+      { x: 9, y: 5 },
+    ]);
+  });
+});
+
+describe("getEmptyCells", () => {
+  it("should return empty cells", () => {
+    const snakeBody = [
+      { x: 10, y: 3 },
+      { x: 10, y: 4 },
+      { x: 10, y: 5 },
+    ];
+    const enemySnakeBody = [
+      { x: 9, y: 3 },
+      { x: 9, y: 4 },
+      { x: 9, y: 5 },
+    ];
+    const snake = createBattlesnake("snake", snakeBody);
+    const enemy = createBattlesnake("enemy", enemySnakeBody);
+    const gameState = createGameState(snake, { enemySnakes: [enemy] });
+
+    const result = getEmptyCells(gameState);
+
+    result.forEach((cell) => {
+      snakeBody.forEach((bodyCell) => expect(cell).not.toEqual(bodyCell));
+      enemySnakeBody.forEach((bodyCell) => expect(cell).not.toEqual(bodyCell));
+    });
   });
 });

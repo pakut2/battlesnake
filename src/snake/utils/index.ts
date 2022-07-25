@@ -1,10 +1,6 @@
 import { isEqual } from "lodash";
 import { Coord, Direction, GameState } from "../types/types";
 
-export const checkCollision = (coords1: Coord, coords2: Coord): boolean => {
-  return isEqual(coords1, coords2);
-};
-
 export const getDirection = (headCoords: Coord, neighbourCoords: Coord): Direction => {
   if (isEqual(neighbourCoords, { x: headCoords.x, y: headCoords.y + 1 })) {
     return "up";
@@ -42,11 +38,7 @@ export const manhattanDistance = (coords1: Coord, coords2: Coord): number => {
 };
 
 export const isCellBlocked = (gameState: GameState, baseCell: Coord): boolean => {
-  // TODO move these into separate function
-  const snakeBody = gameState.you.body;
-  const enemySnakeBodies = gameState.board.snakes.flatMap((snake) => snake.body);
-  const takenCells = snakeBody.concat(enemySnakeBodies);
-
+  const takenCells = getTakenCells(gameState);
   return containsCell(baseCell, takenCells);
 };
 
@@ -81,4 +73,27 @@ export const moveSnake = (gameState: GameState, currentHeadLocation: Coord): Gam
   gameState.you.head = currentHeadLocation;
 
   return gameState;
+};
+
+export const getTakenCells = (gameState: GameState): Coord[] => {
+  return gameState.board.snakes.flatMap((snake) => snake.body);
+};
+
+export const getEmptyCells = (gameState: GameState): Coord[] => {
+  //! Scan smaller radius
+
+  const takenCells = getTakenCells(gameState);
+  const emptyCells: Coord[] = [];
+
+  for (let i = 0; i < gameState.board.height; i++) {
+    for (let j = 0; j < gameState.board.width; j++) {
+      const currentCell: Coord = { x: j, y: i };
+
+      if (!takenCells.some((cell) => isEqual(cell, currentCell))) {
+        emptyCells.push(currentCell);
+      }
+    }
+  }
+
+  return emptyCells;
 };

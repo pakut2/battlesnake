@@ -89,28 +89,9 @@ export interface GameState {
   you: Battlesnake;
 }
 
-export interface ValidMoves {
-  up: boolean;
-  down: boolean;
-  left: boolean;
-  right: boolean;
-}
-
 export type Direction = "up" | "down" | "left" | "right";
 
-export interface CoordsFromPoint extends Coord {
-  direction: Direction;
-}
-
-// interface Node {
-//   location: Coord;
-//   g?: number;
-//   h?: number;
-//   f?: number;
-//   parent?: Node;
-// }
-
-interface DirectionWithPath {
+interface PathToTarget {
   direction: Direction;
   path: Coord[];
 }

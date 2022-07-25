@@ -1,23 +1,21 @@
-import { Food } from "./food";
+import { isEqual } from "lodash";
 import { Node } from "./node";
-import { DirectionWithPath, GameState, ValidMoves } from "./types/types";
-import { checkCollision, containsCell, getDirection, manhattanDistance, moveSnake } from "./utils";
+import { Coord, Direction, GameState, PathToTarget } from "./types/types";
+import { containsCell, getDirection, getEmptyCells, manhattanDistance, moveSnake } from "./utils";
 
 export class Move {
-  private gameState: GameState;
-  private validMoves: ValidMoves;
-
-  public pathToClosestFood(gameState: GameState): DirectionWithPath {
+  public shortestPathToTarget(gameState: GameState, start: Coord, target: Coord): PathToTarget {
     // TODO
     //! Prevent snake from trapping itself by going for the closest food
-    //! Survival mode if trapped
+
+    let mutableGameState: GameState = gameState;
+
+    const startNode = new Node(start);
+    const targetNode = new Node(target);
 
     const unevaluatedNodes: Node[] = [];
     const evaluatedNodes: Node[] = [];
     const shortestPath: Node[] = [];
-
-    const startNode = new Node(gameState.you.head);
-    const targetNode = new Node(Food.closestFood(gameState.you.head, gameState.board.food));
 
     unevaluatedNodes.push(startNode);
 
@@ -26,7 +24,7 @@ export class Move {
         previousNode.totalCost < currentNode.totalCost ? previousNode : currentNode,
       );
 
-      if (checkCollision(currentNode.location, targetNode.location)) {
+      if (isEqual(currentNode.location, targetNode.location)) {
         shortestPath.push(currentNode);
 
         while (currentNode.parent) {
@@ -45,11 +43,11 @@ export class Move {
       unevaluatedNodes.splice(unevaluatedNodes.indexOf(currentNode), 1);
       evaluatedNodes.push(currentNode);
 
-      if (currentNode.location !== gameState.you.head) {
-        gameState = moveSnake(gameState, currentNode.location);
+      if (currentNode.location !== mutableGameState.you.head) {
+        mutableGameState = moveSnake(mutableGameState, currentNode.location);
       }
 
-      currentNode.updateNeighbours(gameState);
+      currentNode.updateNeighbours(mutableGameState);
       currentNode.neighbours.forEach((neighbour) => {
         if (
           !containsCell(
@@ -77,91 +75,31 @@ export class Move {
         }
       });
     }
-
-    // no path could be found, enter survival mode
   }
 
-  public possibleMoves(gameState: GameState): ValidMoves {
-    this.resetState(gameState);
+  public survivalMode(gameState: GameState): Direction {
+    const emptyCells = getEmptyCells(gameState);
+    const snakeHead = new Node(gameState.you.head);
+    snakeHead.updateNeighbours(gameState);
 
-    this.borderCollisionValidation();
-    this.bodyCollisionValidation();
+    snakeHead.neighbours.forEach((neighbour) => {
+      emptyCells.forEach((cell) => {
+        if (isEqual(cell, neighbour.location)) {
+          return;
+        }
 
-    return this.validMoves;
-  }
+        const path = this.shortestPathToTarget(gameState, neighbour.location, cell);
 
-  private resetState(gameState: GameState): void {
-    this.gameState = gameState;
-    this.validMoves = {
-      up: true,
-      down: true,
-      left: true,
-      right: true,
-    };
-  }
+        if (path) {
+          neighbour.reachableCells += 1;
+        }
+      });
+    });
 
-  private borderCollisionValidation(): void {
-    const snakeHead = this.gameState.you.head;
-    const boardWidth = this.gameState.board.width;
-    const boardHeight = this.gameState.board.height;
+    const safestNeighbour = snakeHead.neighbours.reduce((previousNode, currentNode) =>
+      previousNode.reachableCells > currentNode.reachableCells ? previousNode : currentNode,
+    );
 
-    if (snakeHead.x + 1 === boardWidth) {
-      this.validMoves.right = false;
-    }
-
-    if (snakeHead.x === 0) {
-      this.validMoves.left = false;
-    }
-
-    if (snakeHead.y + 1 === boardHeight) {
-      this.validMoves.up = false;
-    }
-
-    if (snakeHead.y === 0) {
-      this.validMoves.down = false;
-    }
-  }
-
-  private bodyCollisionValidation(): void {
-    const snakeHead = this.gameState.you.head;
-    const snakeBody = this.gameState.you.body;
-    const enemySnakeBodies = this.gameState.board.snakes.flatMap((snake) => snake.body);
-    const possibleCollisions = snakeBody.concat(enemySnakeBodies);
-
-    if (
-      this.validMoves.up &&
-      possibleCollisions.some((obstacle) =>
-        checkCollision(obstacle, { ...snakeHead, y: snakeHead.y + 1 }),
-      )
-    ) {
-      this.validMoves.up = false;
-    }
-
-    if (
-      this.validMoves.down &&
-      possibleCollisions.some((obstacle) =>
-        checkCollision(obstacle, { ...snakeHead, y: snakeHead.y - 1 }),
-      )
-    ) {
-      this.validMoves.down = false;
-    }
-
-    if (
-      this.validMoves.right &&
-      possibleCollisions.some((obstacle) =>
-        checkCollision(obstacle, { ...snakeHead, x: snakeHead.x + 1 }),
-      )
-    ) {
-      this.validMoves.right = false;
-    }
-
-    if (
-      this.validMoves.left &&
-      possibleCollisions.some((obstacle) =>
-        checkCollision(obstacle, { ...snakeHead, x: snakeHead.x - 1 }),
-      )
-    ) {
-      this.validMoves.left = false;
-    }
+    return getDirection(snakeHead.location, safestNeighbour.location);
   }
 }

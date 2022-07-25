@@ -8,6 +8,7 @@ export class Node {
   public totalCost: number;
   public readonly neighbours: Node[];
   public parent: Node;
+  public reachableCells: number;
 
   constructor(coords: Coord) {
     this.location = coords;
@@ -16,6 +17,7 @@ export class Node {
     this.totalCost = 0;
     this.neighbours = [];
     this.parent = undefined;
+    this.reachableCells = 0;
   }
 
   public updateNeighbours(gameState: GameState): void {
