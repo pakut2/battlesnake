@@ -15,7 +15,6 @@ export class Move {
 
     const unevaluatedNodes: Node[] = [];
     const evaluatedNodes: Node[] = [];
-    const shortestPath: Node[] = [];
 
     unevaluatedNodes.push(startNode);
 
@@ -25,6 +24,7 @@ export class Move {
       );
 
       if (isEqual(currentNode.location, targetNode.location)) {
+        const shortestPath: Node[] = [];
         shortestPath.push(currentNode);
 
         while (currentNode.parent) {
