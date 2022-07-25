@@ -1,0 +1,54 @@
+version: 2.1
+
+executors:
+  node-docker:
+    docker:
+      - image: cimg/node:16.14.2
+    resource_class: small
+
+commands:
+  install-npm-dependencies:
+    description: 'Installs dependencies with pnpm'
+    steps:
+      - run:
+          name: Install pnpm
+          command: |
+            sudo npm install --global pnpm
+
+      - restore_cache:
+          keys:
+            - pnpm-packages-{{ checksum "pnpm-lock.yaml" }}
+
+      - run:
+          name: Install Dependencies
+          command: pnpm install --frozen-lockfile
+
+      - save_cache:
+          key: pnpm-packages-{{ checksum "pnpm-lock.yaml" }}
+          paths:
+            - ~/.pnpm-store
+
+jobs:
+  build:
+    executor: node-docker
+    steps:
+      - checkout
+      - install-npm-dependencies
+      - run:
+          name: "Build project"
+          command: pnpm run build
+  test:
+    executor: node-docker
+    steps:
+      - checkout
+      - install-npm-dependencies
+      - run:
+          name: "Run tests"
+          command: pnpm run test
+
+workflows:
+  version: 2
+  main:
+    jobs:
+      - build
+      - test
