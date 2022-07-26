@@ -91,7 +91,14 @@ export interface GameState {
 
 export type Direction = "up" | "down" | "left" | "right";
 
-interface PathToTarget {
+export interface PathToTarget {
   direction: Direction;
   path: Coord[];
+}
+
+export interface Borders {
+  topBorder: number;
+  bottomBorder: number;
+  rightBorder: number;
+  leftBorder: number;
 }

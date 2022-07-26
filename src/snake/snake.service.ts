@@ -1,11 +1,11 @@
 import { Injectable } from "@nestjs/common";
-import { Food } from "./food";
+import { Cell } from "./cell";
 import { Move } from "./move";
 import { Direction, GameState, InfoResponse } from "./types/types";
 
 @Injectable()
 export class SnakeService {
-  constructor(private readonly move: Move) {}
+  constructor(private readonly cell: Cell, private readonly move: Move) {}
 
   public info(): InfoResponse {
     return {
@@ -22,7 +22,7 @@ export class SnakeService {
     const availableFood = gameState.board.food;
 
     if (availableFood.length) {
-      const closestFoodLocation = Food.closestFood(snakeHead, availableFood);
+      const closestFoodLocation = this.cell.closestTarget(snakeHead, availableFood);
       const path = this.move.shortestPathToTarget(gameState, snakeHead, closestFoodLocation);
 
       if (!path) {

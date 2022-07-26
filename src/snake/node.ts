@@ -1,5 +1,5 @@
+import { Cell } from "./cell";
 import { Coord, GameState } from "./types/types";
-import { isCellBlocked, isCellInBounds } from "./utils";
 
 export class Node {
   public readonly location: Coord;
@@ -21,32 +21,33 @@ export class Node {
   }
 
   public updateNeighbours(gameState: GameState): void {
+    const cell = new Cell();
     const coords = this.location;
 
     if (
-      !isCellBlocked(gameState, { x: coords.x, y: coords.y + 1 }) &&
-      isCellInBounds(gameState, { x: coords.x, y: coords.y + 1 })
+      !cell.isCellBlocked(gameState, { x: coords.x, y: coords.y + 1 }) &&
+      cell.isCellInBounds(gameState, { x: coords.x, y: coords.y + 1 })
     ) {
       this.neighbours.push(new Node({ x: coords.x, y: coords.y + 1 }));
     }
 
     if (
-      !isCellBlocked(gameState, { x: coords.x, y: coords.y - 1 }) &&
-      isCellInBounds(gameState, { x: coords.x, y: coords.y - 1 })
+      !cell.isCellBlocked(gameState, { x: coords.x, y: coords.y - 1 }) &&
+      cell.isCellInBounds(gameState, { x: coords.x, y: coords.y - 1 })
     ) {
       this.neighbours.push(new Node({ x: coords.x, y: coords.y - 1 }));
     }
 
     if (
-      !isCellBlocked(gameState, { x: coords.x + 1, y: coords.y }) &&
-      isCellInBounds(gameState, { x: coords.x + 1, y: coords.y })
+      !cell.isCellBlocked(gameState, { x: coords.x + 1, y: coords.y }) &&
+      cell.isCellInBounds(gameState, { x: coords.x + 1, y: coords.y })
     ) {
       this.neighbours.push(new Node({ x: coords.x + 1, y: coords.y }));
     }
 
     if (
-      !isCellBlocked(gameState, { x: coords.x - 1, y: coords.y }) &&
-      isCellInBounds(gameState, { x: coords.x - 1, y: coords.y })
+      !cell.isCellBlocked(gameState, { x: coords.x - 1, y: coords.y }) &&
+      cell.isCellInBounds(gameState, { x: coords.x - 1, y: coords.y })
     ) {
       this.neighbours.push(new Node({ x: coords.x - 1, y: coords.y }));
     }
