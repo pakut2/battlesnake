@@ -1,14 +1,19 @@
+import { Injectable } from "@nestjs/common";
 import { isEqual } from "lodash";
+import { Cell } from "./cell";
 import { Node } from "./node";
 import { Coord, Direction, GameState, PathToTarget } from "./types/types";
-import { containsCell, getDirection, getEmptyCells, manhattanDistance, moveSnake } from "./utils";
+import { manhattanDistance } from "./utils";
 
+@Injectable()
 export class Move {
+  constructor(private readonly cell: Cell) {}
+
   public shortestPathToTarget(gameState: GameState, start: Coord, target: Coord): PathToTarget {
     // TODO
     //! Prevent snake from trapping itself by going for the closest food
 
-    let mutableGameState: GameState = gameState;
+    // let mutableGameState: GameState = gameState;
 
     const startNode = new Node(start);
     const targetNode = new Node(target);
@@ -35,7 +40,7 @@ export class Move {
         const reversedPath = shortestPath.reverse();
 
         return {
-          direction: getDirection(startNode.location, reversedPath[1].location),
+          direction: this.cell.getDirection(startNode.location, reversedPath[1].location),
           path: reversedPath.map((path) => path.location),
         };
       }
@@ -43,14 +48,14 @@ export class Move {
       unevaluatedNodes.splice(unevaluatedNodes.indexOf(currentNode), 1);
       evaluatedNodes.push(currentNode);
 
-      if (currentNode.location !== mutableGameState.you.head) {
-        mutableGameState = moveSnake(mutableGameState, currentNode.location);
-      }
+      // if (currentNode.location !== mutableGameState.you.head) {
+      //   mutableGameState = superficiallyMoveSnake(mutableGameState, currentNode.location);
+      // }
 
-      currentNode.updateNeighbours(mutableGameState);
+      currentNode.updateNeighbours(gameState);
       currentNode.neighbours.forEach((neighbour) => {
         if (
-          !containsCell(
+          !this.cell.containsCell(
             neighbour.location,
             evaluatedNodes.map((node) => node.location),
           )
@@ -58,7 +63,7 @@ export class Move {
           const possibleCostFromStart = currentNode.costFromStart + 1;
 
           if (
-            !containsCell(
+            !this.cell.containsCell(
               neighbour.location,
               unevaluatedNodes.map((node) => node.location),
             )
@@ -78,28 +83,36 @@ export class Move {
   }
 
   public survivalMode(gameState: GameState): Direction {
-    const emptyCells = getEmptyCells(gameState);
+    const emptyCells = this.cell.getEmptyCells(gameState);
     const snakeHead = new Node(gameState.you.head);
     snakeHead.updateNeighbours(gameState);
 
     snakeHead.neighbours.forEach((neighbour) => {
-      emptyCells.forEach((cell) => {
-        if (isEqual(cell, neighbour.location)) {
-          return;
-        }
-
-        const path = this.shortestPathToTarget(gameState, neighbour.location, cell);
-
-        if (path) {
-          neighbour.reachableCells += 1;
-        }
-      });
+      neighbour.reachableCells = this.amountOfReachableCells(gameState, neighbour, emptyCells);
     });
 
     const safestNeighbour = snakeHead.neighbours.reduce((previousNode, currentNode) =>
       previousNode.reachableCells > currentNode.reachableCells ? previousNode : currentNode,
     );
 
-    return getDirection(snakeHead.location, safestNeighbour.location);
+    return this.cell.getDirection(snakeHead.location, safestNeighbour.location);
+  }
+
+  public amountOfReachableCells(gameState: GameState, baseNode: Node, emptyCells: Coord[]): number {
+    let reachableCells = 0;
+
+    emptyCells.forEach((cell) => {
+      if (isEqual(cell, baseNode.location)) {
+        return;
+      }
+
+      const path = this.shortestPathToTarget(gameState, baseNode.location, cell);
+
+      if (path) {
+        reachableCells += 1;
+      }
+    });
+
+    return reachableCells;
   }
 }
