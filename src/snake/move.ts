@@ -3,17 +3,14 @@ import { isEqual } from "lodash";
 import { Cell } from "./cell";
 import { Node } from "./node";
 import { Coord, Direction, GameState, PathToTarget } from "./types/types";
-import { manhattanDistance } from "./utils";
+import { manhattanDistance, superficiallyMoveSnake } from "./utils";
 
 @Injectable()
 export class Move {
   constructor(private readonly cell: Cell) {}
 
   public shortestPathToTarget(gameState: GameState, start: Coord, target: Coord): PathToTarget {
-    // TODO
-    //! Prevent snake from trapping itself by going for the closest food
-
-    // let mutableGameState: GameState = gameState;
+    let mutableGameState: GameState = gameState;
 
     const startNode = new Node(start);
     const targetNode = new Node(target);
@@ -48,11 +45,11 @@ export class Move {
       unevaluatedNodes.splice(unevaluatedNodes.indexOf(currentNode), 1);
       evaluatedNodes.push(currentNode);
 
-      // if (currentNode.location !== mutableGameState.you.head) {
-      //   mutableGameState = superficiallyMoveSnake(mutableGameState, currentNode.location);
-      // }
+      if (currentNode.location !== mutableGameState.you.head) {
+        mutableGameState = superficiallyMoveSnake(mutableGameState, currentNode.location);
+      }
 
-      currentNode.updateNeighbours(gameState);
+      currentNode.updateNeighbours(mutableGameState);
       currentNode.neighbours.forEach((neighbour) => {
         if (
           !this.cell.containsCell(
