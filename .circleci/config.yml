@@ -37,6 +37,7 @@ jobs:
       - run:
           name: "Build project"
           command: pnpm run build
+
   test:
     executor: node-docker
     steps:
