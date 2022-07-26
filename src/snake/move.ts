@@ -13,8 +13,6 @@ export class Move {
     // TODO
     //! Prevent snake from trapping itself by going for the closest food
 
-    // let mutableGameState: GameState = gameState;
-
     const startNode = new Node(start);
     const targetNode = new Node(target);
 
@@ -47,10 +45,6 @@ export class Move {
 
       unevaluatedNodes.splice(unevaluatedNodes.indexOf(currentNode), 1);
       evaluatedNodes.push(currentNode);
-
-      // if (currentNode.location !== mutableGameState.you.head) {
-      //   mutableGameState = superficiallyMoveSnake(mutableGameState, currentNode.location);
-      // }
 
       currentNode.updateNeighbours(gameState);
       currentNode.neighbours.forEach((neighbour) => {
