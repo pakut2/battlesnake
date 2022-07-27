@@ -23,18 +23,14 @@ export class Cell {
     }
   }
 
-  public closestTarget(baseCell: Coord, targets: Coord[]): Coord {
-    const closestTarget = targets
+  public closestCells(baseCell: Coord, targetCells: Coord[]): Coord[] {
+    return targetCells
       .map((target) => ({
         ...target,
         distance: manhattanDistance(baseCell, target),
       }))
-      .reduce((coords1, coords2) => (coords1.distance < coords2.distance ? coords1 : coords2));
-
-    return {
-      x: closestTarget.x,
-      y: closestTarget.y,
-    };
+      .sort((target1, target2) => target1.distance - target2.distance)
+      .map((target) => ({ x: target.x, y: target.y }));
   }
 
   public isCellBlocked(gameState: GameState, baseCell: Coord): boolean {
@@ -73,6 +69,10 @@ export class Cell {
   }
 
   public getEmptyCells(gameState: GameState, scanRange = 3): Coord[] {
+    if (gameState.you.length > 30) {
+      scanRange = 4;
+    }
+
     const takenCells = this.getTakenCells(gameState);
     const { topBorder, bottomBorder, rightBorder, leftBorder } = Cell.getScannedRangeBorders(
       gameState,

@@ -1,4 +1,5 @@
 import { Cell } from "./cell";
+import { Move } from "./move";
 import { Coord, GameState } from "./types/types";
 
 export class Node {
@@ -51,5 +52,17 @@ export class Node {
     ) {
       this.neighbours.push(new Node({ x: coords.x - 1, y: coords.y }));
     }
+  }
+
+  public updateNumberOfReachableCells(gameState: GameState, emptyCells: Coord[]): void {
+    const move = new Move(new Cell());
+
+    emptyCells.forEach((cell) => {
+      const path = move.shortestPathToTarget(gameState, this.location, cell);
+
+      if (path) {
+        this.reachableCells += 1;
+      }
+    });
   }
 }

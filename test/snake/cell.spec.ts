@@ -1,5 +1,6 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { Cell } from "../../src/snake/cell";
+import { Coord } from "../../src/snake/types/types";
 import { createBattlesnake, createGameState } from "../helpers/seeders";
 
 describe("Cell", () => {
@@ -37,23 +38,27 @@ describe("Cell", () => {
     });
   });
 
-  describe("closestTarget", () => {
-    it("should choose the closest target", () => {
-      const result = cell.closestTarget({ x: 1, y: 1 }, [
-        { x: 3, y: 5 },
+  describe("closestCells", () => {
+    it("should sort cells by distance from baseCell ASC", () => {
+      const targetCells = [
         { x: 4, y: 5 },
-      ]);
+        { x: 3, y: 5 },
+      ];
 
-      expect(result).toEqual({ x: 3, y: 5 });
+      const result = cell.closestCells({ x: 1, y: 1 }, targetCells);
+
+      expect(result).toEqual(targetCells.reverse());
     });
 
-    it("should choose the last target if there are multiple the same distance away", () => {
-      const result = cell.closestTarget({ x: 1, y: 1 }, [
+    it("should choose return cells in unchanged order if they are the same distance away", () => {
+      const targetCells = [
         { x: 3, y: 5 },
         { x: 7, y: 1 },
-      ]);
+      ];
 
-      expect(result).toEqual({ x: 7, y: 1 });
+      const result = cell.closestCells({ x: 1, y: 1 }, targetCells);
+
+      expect(result).toEqual(targetCells);
     });
   });
 
@@ -199,7 +204,7 @@ describe("Cell", () => {
 
   describe("getEmptyCells", () => {
     it("should return empty cells in specified radius (case 1)", () => {
-      const scanRadius = 3;
+      const scanRange = 3;
       const snakeBody = [
         { x: 10, y: 3 },
         { x: 10, y: 4 },
@@ -219,15 +224,15 @@ describe("Cell", () => {
       result.forEach((cell) => {
         snakeBody.forEach((bodyCell) => expect(cell).not.toEqual(bodyCell));
         enemySnakeBody.forEach((bodyCell) => expect(cell).not.toEqual(bodyCell));
-        expect(cell.y).not.toBeGreaterThan(snakeBody[0].y + scanRadius);
-        expect(cell.y).not.toBeLessThan(snakeBody[0].y - scanRadius);
-        expect(cell.x).not.toBeGreaterThan(snakeBody[0].x + scanRadius);
-        expect(cell.x).not.toBeLessThan(snakeBody[0].x - scanRadius);
+        expect(cell.y).not.toBeGreaterThan(snakeBody[0].y + scanRange);
+        expect(cell.y).not.toBeLessThan(snakeBody[0].y - scanRange);
+        expect(cell.x).not.toBeGreaterThan(snakeBody[0].x + scanRange);
+        expect(cell.x).not.toBeLessThan(snakeBody[0].x - scanRange);
       });
     });
 
-    it("should return empty cells in specified radius (case 2)", () => {
-      const scanRadius = 3;
+    it("should return empty cells in specified range (case 2)", () => {
+      const scanRange = 3;
       const snakeBody = [
         { x: 2, y: 1 },
         { x: 2, y: 2 },
@@ -248,10 +253,33 @@ describe("Cell", () => {
 
       result.forEach((cell) => {
         snakeBody.forEach((bodyCell) => expect(cell).not.toEqual(bodyCell));
-        expect(cell.y).not.toBeGreaterThan(snakeBody[0].y + scanRadius);
-        expect(cell.y).not.toBeLessThan(snakeBody[0].y - scanRadius);
-        expect(cell.x).not.toBeGreaterThan(snakeBody[0].x + scanRadius);
-        expect(cell.x).not.toBeLessThan(snakeBody[0].x - scanRadius);
+        expect(cell.y).not.toBeGreaterThan(snakeBody[0].y + scanRange);
+        expect(cell.y).not.toBeLessThan(snakeBody[0].y - scanRange);
+        expect(cell.x).not.toBeGreaterThan(snakeBody[0].x + scanRange);
+        expect(cell.x).not.toBeLessThan(snakeBody[0].x - scanRange);
+      });
+    });
+
+    it("should increase scan radius when size is greater than 30", () => {
+      const scanRange = 4;
+      const snakeBody: Coord[] = [];
+
+      for (let i = 0; i <= 31; i++) {
+        const coord = Math.floor(Math.random() * 11);
+        snakeBody.push({ x: coord, y: coord });
+      }
+
+      const snake = createBattlesnake("snake", snakeBody);
+      const gameState = createGameState(snake);
+
+      const result = cell.getEmptyCells(gameState);
+
+      result.forEach((cell) => {
+        snakeBody.forEach((bodyCell) => expect(cell).not.toEqual(bodyCell));
+        expect(cell.y).not.toBeGreaterThan(snakeBody[0].y + scanRange);
+        expect(cell.y).not.toBeLessThan(snakeBody[0].y - scanRange);
+        expect(cell.x).not.toBeGreaterThan(snakeBody[0].x + scanRange);
+        expect(cell.x).not.toBeLessThan(snakeBody[0].x - scanRange);
       });
     });
   });

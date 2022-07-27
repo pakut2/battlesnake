@@ -93,7 +93,7 @@ export type Direction = "up" | "down" | "left" | "right";
 
 export interface PathToTarget {
   direction: Direction;
-  path: Coord[];
+  shortestPath: Coord[];
 }
 
 export interface Borders {

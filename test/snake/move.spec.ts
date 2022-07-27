@@ -14,7 +14,7 @@ describe("Move", () => {
     move = module.get<Move>(Move);
   });
 
-  describe("pathToClosestFood", () => {
+  describe("shortestPathToTarget", () => {
     it("should successfully determine the shortest path to the target", () => {
       const foodLocation = { x: 3, y: 6 };
       const snake = createBattlesnake("snake", [
@@ -27,9 +27,9 @@ describe("Move", () => {
 
       const result = move.shortestPathToTarget(gameState, gameState.you.head, foodLocation);
 
-      const { direction, path } = result;
+      const { direction, shortestPath } = result;
       expect(direction).toEqual("right");
-      expect(path).toEqual([
+      expect(shortestPath).toEqual([
         { x: 0, y: 3 },
         { x: 1, y: 3 },
         { x: 2, y: 3 },
@@ -54,9 +54,9 @@ describe("Move", () => {
 
       const result = move.shortestPathToTarget(gameState, gameState.you.head, foodLocation);
 
-      const { direction, path } = result;
+      const { direction, shortestPath } = result;
       expect(direction).toEqual("down");
-      expect(path[path.length - 1]).toEqual(foodLocation);
+      expect(shortestPath[shortestPath.length - 1]).toEqual(foodLocation);
     });
 
     it("should return undefined in an impossible situation (case 1)", () => {
@@ -145,9 +145,18 @@ describe("Move", () => {
 
       expect(result).not.toBeDefined();
     });
+
+    it("should return undefined if start and target are in the same location", () => {
+      const snake = createBattlesnake("snake", [{ x: 8, y: 8 }]);
+      const gameState = createGameState(snake);
+
+      const result = move.shortestPathToTarget(gameState, gameState.you.head, gameState.you.head);
+
+      expect(result).not.toBeDefined();
+    });
   });
 
-  describe("survivalMode", () => {
+  describe("safestPath", () => {
     it("should return the direction of the neighbour that is able to reach the most cells (case 1)", () => {
       const snake = createBattlesnake("snake", [
         { x: 2, y: 1 },
@@ -164,7 +173,7 @@ describe("Move", () => {
       ]);
       const gameState = createGameState(snake);
 
-      const result = move.survivalMode(gameState);
+      const result = move.safestPath(gameState);
 
       expect(result).toEqual("left");
     });
@@ -186,7 +195,7 @@ describe("Move", () => {
       ]);
       const gameState = createGameState(snake);
 
-      const result = move.survivalMode(gameState);
+      const result = move.safestPath(gameState);
 
       expect(result).toEqual("left");
     });

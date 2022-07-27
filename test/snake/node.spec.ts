@@ -1,3 +1,4 @@
+import { Cell } from "../../src/snake/cell";
 import { Node } from "../../src/snake/node";
 import { createBattlesnake, createGameState } from "../helpers/seeders";
 
@@ -48,6 +49,32 @@ describe("Node", () => {
       node.updateNeighbours(gameState);
 
       expect(node.neighbours).toEqual([]);
+    });
+  });
+
+  describe("updateNumberOfReachableCells", () => {
+    it("should set the correct number of reachable cells", () => {
+      const snake = createBattlesnake("snake", [
+        { x: 2, y: 1 },
+        { x: 2, y: 2 },
+        { x: 2, y: 3 },
+        { x: 3, y: 3 },
+        { x: 4, y: 3 },
+        { x: 4, y: 2 },
+        { x: 4, y: 1 },
+        { x: 4, y: 0 },
+        { x: 3, y: 0 },
+        { x: 2, y: 0 },
+        { x: 1, y: 0 },
+      ]);
+      const gameState = createGameState(snake);
+      const cell = new Cell();
+      const emptyCells = cell.getEmptyCells(gameState);
+      const node = new Node({ x: 3, y: 1 });
+
+      node.updateNumberOfReachableCells(gameState, emptyCells);
+
+      expect(node.reachableCells).toEqual(1);
     });
   });
 });
