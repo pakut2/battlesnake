@@ -28,6 +28,12 @@ commands:
           paths:
             - ~/.pnpm-store
 
+  login-docker:
+    description: "Log into Docker Hub"
+    steps:
+      - run:
+          command: docker login -u $DOCKER_REGISTRY_USER -p $DOCKER_REGISTRY_KEY
+
 jobs:
   build:
     executor: node-docker
@@ -47,9 +53,24 @@ jobs:
           name: "Run tests"
           command: pnpm run test
 
+  build-image:
+    executor: node-docker
+    steps:
+      - setup_remote_docker:
+          version: 20.10.6
+          docker_layer_caching: false
+      - checkout
+      - login-docker
+      - run:
+          name: "Build and push image"
+          command: |
+            docker build -t pakut2/battlesnake:latest .
+            docker push pakut2/battlesnake:latest
+
 workflows:
   version: 2
   main:
     jobs:
       - build
       - test
+      - build-image
