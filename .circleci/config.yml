@@ -35,7 +35,7 @@ commands:
           command: docker login -u $DOCKER_REGISTRY_USER -p $DOCKER_REGISTRY_KEY
 
 jobs:
-  build:
+  build-project:
     executor: node-docker
     steps:
       - checkout
@@ -71,6 +71,10 @@ workflows:
   version: 2
   main:
     jobs:
-      - build
+      - build-project
       - test
-      - build-image
+      - build-image:
+          filters:
+            branches:
+              only:
+                - main
