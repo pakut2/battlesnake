@@ -33,8 +33,7 @@ export class Cell {
       .map((target) => ({ x: target.x, y: target.y }));
   }
 
-  public isCellBlocked(gameState: GameState, baseCell: Coord): boolean {
-    const takenCells = this.getTakenCells(gameState);
+  public isCellBlocked(gameState: GameState, baseCell: Coord, takenCells: Coord[]): boolean {
     return this.containsCell(baseCell, takenCells);
   }
 
@@ -65,7 +64,7 @@ export class Cell {
   }
 
   public getTakenCells(gameState: GameState): Coord[] {
-    return gameState.board.snakes.flatMap((snake) => snake.body);
+    return gameState.board.snakes.flatMap((snake) => snake.body).concat(gameState.board.hazards);
   }
 
   public getEmptyCells(gameState: GameState, scanRange = 3): Coord[] {

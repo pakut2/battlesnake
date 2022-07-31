@@ -24,30 +24,31 @@ export class Node {
   public updateNeighbours(gameState: GameState): void {
     const cell = new Cell();
     const coords = this.location;
+    const takenCells = cell.getTakenCells(gameState);
 
     if (
-      !cell.isCellBlocked(gameState, { x: coords.x, y: coords.y + 1 }) &&
+      !cell.isCellBlocked(gameState, { x: coords.x, y: coords.y + 1 }, takenCells) &&
       cell.isCellInBounds(gameState, { x: coords.x, y: coords.y + 1 })
     ) {
       this.neighbours.push(new Node({ x: coords.x, y: coords.y + 1 }));
     }
 
     if (
-      !cell.isCellBlocked(gameState, { x: coords.x, y: coords.y - 1 }) &&
+      !cell.isCellBlocked(gameState, { x: coords.x, y: coords.y - 1 }, takenCells) &&
       cell.isCellInBounds(gameState, { x: coords.x, y: coords.y - 1 })
     ) {
       this.neighbours.push(new Node({ x: coords.x, y: coords.y - 1 }));
     }
 
     if (
-      !cell.isCellBlocked(gameState, { x: coords.x + 1, y: coords.y }) &&
+      !cell.isCellBlocked(gameState, { x: coords.x + 1, y: coords.y }, takenCells) &&
       cell.isCellInBounds(gameState, { x: coords.x + 1, y: coords.y })
     ) {
       this.neighbours.push(new Node({ x: coords.x + 1, y: coords.y }));
     }
 
     if (
-      !cell.isCellBlocked(gameState, { x: coords.x - 1, y: coords.y }) &&
+      !cell.isCellBlocked(gameState, { x: coords.x - 1, y: coords.y }, takenCells) &&
       cell.isCellInBounds(gameState, { x: coords.x - 1, y: coords.y })
     ) {
       this.neighbours.push(new Node({ x: coords.x - 1, y: coords.y }));

@@ -73,8 +73,9 @@ describe("Cell", () => {
         { x: 9, y: 5 },
       ]);
       const gameState = createGameState(snake);
+      const takenCells = cell.getTakenCells(gameState);
 
-      const result = cell.isCellBlocked(gameState, { x: 10, y: 4 });
+      const result = cell.isCellBlocked(gameState, { x: 10, y: 4 }, takenCells);
 
       expect(result).toEqual(true);
     });
@@ -93,8 +94,9 @@ describe("Cell", () => {
         { x: 9, y: 5 },
       ]);
       const gameState = createGameState(snake, { enemySnakes: [enemySnake] });
+      const takenCells = cell.getTakenCells(gameState);
 
-      const result = cell.isCellBlocked(gameState, { x: 10, y: 4 });
+      const result = cell.isCellBlocked(gameState, { x: 10, y: 4 }, takenCells);
 
       expect(result).toEqual(true);
     });
@@ -188,6 +190,32 @@ describe("Cell", () => {
         { x: 9, y: 5 },
       ]);
       const gameState = createGameState(snake, { enemySnakes: [enemy] });
+
+      const result = cell.getTakenCells(gameState);
+
+      expect(result).toEqual([
+        { x: 10, y: 3 },
+        { x: 10, y: 4 },
+        { x: 10, y: 5 },
+        { x: 9, y: 3 },
+        { x: 9, y: 4 },
+        { x: 9, y: 5 },
+      ]);
+    });
+
+    it("should return cells taken by snakes and hazards", () => {
+      const snake = createBattlesnake("snake", [
+        { x: 10, y: 3 },
+        { x: 10, y: 4 },
+        { x: 10, y: 5 },
+      ]);
+      const gameState = createGameState(snake, {
+        hazards: [
+          { x: 9, y: 3 },
+          { x: 9, y: 4 },
+          { x: 9, y: 5 },
+        ],
+      });
 
       const result = cell.getTakenCells(gameState);
 

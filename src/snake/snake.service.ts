@@ -11,9 +11,9 @@ export class SnakeService {
     return {
       apiversion: "1",
       author: "pakut",
-      color: "#543243",
-      head: "default",
-      tail: "default",
+      color: "#d9d9d9",
+      head: "shades",
+      tail: "curled",
     } as InfoResponse;
   }
 
