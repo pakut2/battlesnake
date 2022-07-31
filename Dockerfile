@@ -1,11 +1,11 @@
-FROM node:16-alpine AS battlesnake
+FROM node:16-alpine
 
 WORKDIR /app/battlesnake
 
 COPY package.json .
 COPY pnpm-lock.yaml .
 
-RUN npm install -g pnpm
+RUN npm install --global pnpm
 RUN pnpm install
 
 COPY . .
