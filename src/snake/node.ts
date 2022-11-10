@@ -4,21 +4,15 @@ import { Coord, GameState } from "./types/types";
 
 export class Node {
   public readonly location: Coord;
-  public costFromStart: number;
-  public heuristic: number;
-  public totalCost: number;
-  public readonly neighbours: Node[];
+  public costFromStart = 0;
+  public heuristic = 0;
+  public totalCost = 0;
+  public readonly neighbours: Node[] = [];
   public parent: Node;
-  public reachableCells: number;
+  public reachableCells = 0;
 
   constructor(coords: Coord) {
     this.location = coords;
-    this.costFromStart = 0;
-    this.heuristic = 0;
-    this.totalCost = 0;
-    this.neighbours = [];
-    this.parent = undefined;
-    this.reachableCells = 0;
   }
 
   public updateNeighbours(gameState: GameState): void {
@@ -59,7 +53,7 @@ export class Node {
     const move = new Move(new Cell());
 
     emptyCells.forEach((cell) => {
-      const path = move.shortestPathToTarget(gameState, this.location, cell);
+      const path = move.shortestPath(gameState, this.location, cell);
 
       if (path) {
         this.reachableCells += 1;

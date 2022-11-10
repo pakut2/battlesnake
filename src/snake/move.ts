@@ -2,14 +2,14 @@ import { Injectable } from "@nestjs/common";
 import { isEqual } from "lodash";
 import { Cell } from "./cell";
 import { Node } from "./node";
-import { Coord, Direction, GameState, PathToTarget } from "./types/types";
+import { Coord, Direction, GameState, Path } from "./types/types";
 import { manhattanDistance } from "./utils";
 
 @Injectable()
 export class Move {
   constructor(private readonly cell: Cell) {}
 
-  public shortestPathToTarget(gameState: GameState, start: Coord, target: Coord): PathToTarget {
+  public shortestPath(gameState: GameState, start: Coord, target: Coord): Path {
     if (isEqual(start, target)) {
       return;
     }

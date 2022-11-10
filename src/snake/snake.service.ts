@@ -14,7 +14,7 @@ export class SnakeService {
       color: "#d9d9d9",
       head: "shades",
       tail: "curled",
-    } as InfoResponse;
+    };
   }
 
   public makeMove(gameState: GameState): Direction {
@@ -32,7 +32,7 @@ export class SnakeService {
     const closestFoodLocations = this.cell.closestCells(snakeHead, availableFood);
 
     for (const food of closestFoodLocations) {
-      const path = this.move.shortestPathToTarget(gameState, snakeHead, food);
+      const path = this.move.shortestPath(gameState, snakeHead, food);
 
       if (!path) {
         continue;
@@ -41,7 +41,7 @@ export class SnakeService {
       const { direction, shortestPath } = path;
       const currentTarget = shortestPath[shortestPath.length - 1];
       const nextTarget = closestFoodLocations.some((nextTarget) =>
-        this.move.shortestPathToTarget(gameState, currentTarget, nextTarget),
+        this.move.shortestPath(gameState, currentTarget, nextTarget),
       );
 
       if (nextTarget) {

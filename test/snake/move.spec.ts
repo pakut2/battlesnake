@@ -14,7 +14,7 @@ describe("Move", () => {
     move = module.get<Move>(Move);
   });
 
-  describe("shortestPathToTarget", () => {
+  describe("shortestPath", () => {
     it("should successfully determine the shortest path to the target", () => {
       const foodLocation = { x: 3, y: 6 };
       const snake = createBattlesnake("snake", [
@@ -25,7 +25,7 @@ describe("Move", () => {
       ]);
       const gameState = createGameState(snake, { food: [foodLocation] });
 
-      const result = move.shortestPathToTarget(gameState, gameState.you.head, foodLocation);
+      const result = move.shortestPath(gameState, gameState.you.head, foodLocation);
 
       const { direction, shortestPath } = result;
       expect(direction).toEqual("right");
@@ -52,7 +52,7 @@ describe("Move", () => {
       ]);
       const gameState = createGameState(snake, { food: [foodLocation] });
 
-      const result = move.shortestPathToTarget(gameState, gameState.you.head, foodLocation);
+      const result = move.shortestPath(gameState, gameState.you.head, foodLocation);
 
       const { direction, shortestPath } = result;
       expect(direction).toEqual("down");
@@ -78,7 +78,7 @@ describe("Move", () => {
       ]);
       const gameState = createGameState(snake, { food: [foodLocation] });
 
-      const result = move.shortestPathToTarget(gameState, gameState.you.head, foodLocation);
+      const result = move.shortestPath(gameState, gameState.you.head, foodLocation);
 
       expect(result).not.toBeDefined();
     });
@@ -104,7 +104,7 @@ describe("Move", () => {
       ]);
       const gameState = createGameState(snake, { food: [...foodLocation] });
 
-      const result = move.shortestPathToTarget(gameState, gameState.you.head, foodLocation[0]);
+      const result = move.shortestPath(gameState, gameState.you.head, foodLocation[0]);
 
       expect(result).not.toBeDefined();
     });
@@ -141,7 +141,7 @@ describe("Move", () => {
       ]);
       const gameState = createGameState(snake, { food: [...foodLocation] });
 
-      const result = move.shortestPathToTarget(gameState, gameState.you.head, foodLocation[1]);
+      const result = move.shortestPath(gameState, gameState.you.head, foodLocation[1]);
 
       expect(result).not.toBeDefined();
     });
@@ -150,7 +150,7 @@ describe("Move", () => {
       const snake = createBattlesnake("snake", [{ x: 8, y: 8 }]);
       const gameState = createGameState(snake);
 
-      const result = move.shortestPathToTarget(gameState, gameState.you.head, gameState.you.head);
+      const result = move.shortestPath(gameState, gameState.you.head, gameState.you.head);
 
       expect(result).not.toBeDefined();
     });
