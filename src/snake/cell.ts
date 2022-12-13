@@ -76,9 +76,9 @@ export const getEmptyCells = (gameState: GameState, scanRange = 3): Coord[] => {
   );
   const emptyCells: Coord[] = [];
 
-  for (let i = bottomBorder; i <= topBorder; i++) {
-    for (let j = leftBorder; j <= rightBorder; j++) {
-      const currentCell: Coord = { x: j, y: i };
+  for (let y = bottomBorder; y <= topBorder; y++) {
+    for (let x = leftBorder; x <= rightBorder; x++) {
+      const currentCell: Coord = { x, y };
 
       if (!takenCells.some((cell) => isEqual(cell, currentCell))) {
         emptyCells.push(currentCell);
