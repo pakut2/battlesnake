@@ -1,38 +1,37 @@
-import { Test, TestingModule } from "@nestjs/testing";
-import { Cell } from "../../src/snake/cell";
+import {
+  closestCells,
+  containsCell,
+  getDirection,
+  getEmptyCells,
+  getTakenCells,
+  isCellBlocked,
+  isCellInBounds,
+} from "../../src/snake/cell";
 import { Coord } from "../../src/snake/types/types";
 import { createBattlesnake, createGameState } from "../helpers/seeders";
 
 describe("Cell", () => {
-  let cell: Cell;
-
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({ providers: [Cell] }).compile();
-
-    cell = module.get<Cell>(Cell);
-  });
-
   describe("getDirection", () => {
     it("should return up when neighbour is above the head", () => {
-      const result = cell.getDirection({ x: 1, y: 1 }, { x: 1, y: 2 });
+      const result = getDirection({ x: 1, y: 1 }, { x: 1, y: 2 });
 
       expect(result).toEqual("up");
     });
 
     it("should return down when neighbour is below the head", () => {
-      const result = cell.getDirection({ x: 1, y: 2 }, { x: 1, y: 1 });
+      const result = getDirection({ x: 1, y: 2 }, { x: 1, y: 1 });
 
       expect(result).toEqual("down");
     });
 
     it("should return right when neighbour is to the right of the head", () => {
-      const result = cell.getDirection({ x: 1, y: 1 }, { x: 2, y: 1 });
+      const result = getDirection({ x: 1, y: 1 }, { x: 2, y: 1 });
 
       expect(result).toEqual("right");
     });
 
     it("should return left when neighbour is ato the left of the head", () => {
-      const result = cell.getDirection({ x: 1, y: 1 }, { x: 0, y: 1 });
+      const result = getDirection({ x: 1, y: 1 }, { x: 0, y: 1 });
 
       expect(result).toEqual("left");
     });
@@ -45,7 +44,7 @@ describe("Cell", () => {
         { x: 3, y: 5 },
       ];
 
-      const result = cell.closestCells({ x: 1, y: 1 }, targetCells);
+      const result = closestCells({ x: 1, y: 1 }, targetCells);
 
       expect(result).toEqual(targetCells.reverse());
     });
@@ -56,7 +55,7 @@ describe("Cell", () => {
         { x: 7, y: 1 },
       ];
 
-      const result = cell.closestCells({ x: 1, y: 1 }, targetCells);
+      const result = closestCells({ x: 1, y: 1 }, targetCells);
 
       expect(result).toEqual(targetCells);
     });
@@ -73,9 +72,9 @@ describe("Cell", () => {
         { x: 9, y: 5 },
       ]);
       const gameState = createGameState(snake);
-      const takenCells = cell.getTakenCells(gameState);
+      const takenCells = getTakenCells(gameState);
 
-      const result = cell.isCellBlocked(gameState, { x: 10, y: 4 }, takenCells);
+      const result = isCellBlocked(gameState, { x: 10, y: 4 }, takenCells);
 
       expect(result).toEqual(true);
     });
@@ -94,9 +93,9 @@ describe("Cell", () => {
         { x: 9, y: 5 },
       ]);
       const gameState = createGameState(snake, { enemySnakes: [enemySnake] });
-      const takenCells = cell.getTakenCells(gameState);
+      const takenCells = getTakenCells(gameState);
 
-      const result = cell.isCellBlocked(gameState, { x: 10, y: 4 }, takenCells);
+      const result = isCellBlocked(gameState, { x: 10, y: 4 }, takenCells);
 
       expect(result).toEqual(true);
     });
@@ -104,7 +103,7 @@ describe("Cell", () => {
 
   describe("containsCell", () => {
     it("should return true if cell is taken", () => {
-      const result = cell.containsCell({ x: 10, y: 4 }, [
+      const result = containsCell({ x: 10, y: 4 }, [
         { x: 10, y: 3 },
         { x: 10, y: 4 },
         { x: 10, y: 5 },
@@ -117,7 +116,7 @@ describe("Cell", () => {
     });
 
     it("should return false if cell is empty", () => {
-      const result = cell.containsCell({ x: 9, y: 3 }, [
+      const result = containsCell({ x: 9, y: 3 }, [
         { x: 10, y: 3 },
         { x: 10, y: 4 },
         { x: 10, y: 5 },
@@ -135,7 +134,7 @@ describe("Cell", () => {
       const snake = createBattlesnake("snake", [{ x: 10, y: 5 }]);
       const gameState = createGameState(snake);
 
-      const result = cell.isCellInBounds(gameState, { x: 5, y: 11 });
+      const result = isCellInBounds(gameState, { x: 5, y: 11 });
 
       expect(result).toEqual(false);
     });
@@ -144,7 +143,7 @@ describe("Cell", () => {
       const snake = createBattlesnake("snake", [{ x: 10, y: 5 }]);
       const gameState = createGameState(snake);
 
-      const result = cell.isCellInBounds(gameState, { x: 5, y: -1 });
+      const result = isCellInBounds(gameState, { x: 5, y: -1 });
 
       expect(result).toEqual(false);
     });
@@ -153,7 +152,7 @@ describe("Cell", () => {
       const snake = createBattlesnake("snake", [{ x: 10, y: 5 }]);
       const gameState = createGameState(snake);
 
-      const result = cell.isCellInBounds(gameState, { x: 11, y: 5 });
+      const result = isCellInBounds(gameState, { x: 11, y: 5 });
 
       expect(result).toEqual(false);
     });
@@ -162,7 +161,7 @@ describe("Cell", () => {
       const snake = createBattlesnake("snake", [{ x: 10, y: 5 }]);
       const gameState = createGameState(snake);
 
-      const result = cell.isCellInBounds(gameState, { x: -1, y: 5 });
+      const result = isCellInBounds(gameState, { x: -1, y: 5 });
 
       expect(result).toEqual(false);
     });
@@ -171,7 +170,7 @@ describe("Cell", () => {
       const snake = createBattlesnake("snake", [{ x: 10, y: 5 }]);
       const gameState = createGameState(snake);
 
-      const result = cell.isCellInBounds(gameState, { x: 5, y: 5 });
+      const result = isCellInBounds(gameState, { x: 5, y: 5 });
 
       expect(result).toEqual(true);
     });
@@ -191,7 +190,7 @@ describe("Cell", () => {
       ]);
       const gameState = createGameState(snake, { enemySnakes: [enemy] });
 
-      const result = cell.getTakenCells(gameState);
+      const result = getTakenCells(gameState);
 
       expect(result).toEqual([
         { x: 10, y: 3 },
@@ -217,7 +216,7 @@ describe("Cell", () => {
         ],
       });
 
-      const result = cell.getTakenCells(gameState);
+      const result = getTakenCells(gameState);
 
       expect(result).toEqual([
         { x: 10, y: 3 },
@@ -247,7 +246,7 @@ describe("Cell", () => {
       const enemy = createBattlesnake("enemy", enemySnakeBody);
       const gameState = createGameState(snake, { enemySnakes: [enemy] });
 
-      const result = cell.getEmptyCells(gameState);
+      const result = getEmptyCells(gameState);
 
       result.forEach((cell) => {
         snakeBody.forEach((bodyCell) => expect(cell).not.toEqual(bodyCell));
@@ -277,7 +276,7 @@ describe("Cell", () => {
       const snake = createBattlesnake("snake", snakeBody);
       const gameState = createGameState(snake);
 
-      const result = cell.getEmptyCells(gameState);
+      const result = getEmptyCells(gameState);
 
       result.forEach((cell) => {
         snakeBody.forEach((bodyCell) => expect(cell).not.toEqual(bodyCell));
@@ -300,7 +299,7 @@ describe("Cell", () => {
       const snake = createBattlesnake("snake", snakeBody);
       const gameState = createGameState(snake);
 
-      const result = cell.getEmptyCells(gameState);
+      const result = getEmptyCells(gameState);
 
       result.forEach((cell) => {
         snakeBody.forEach((bodyCell) => expect(cell).not.toEqual(bodyCell));

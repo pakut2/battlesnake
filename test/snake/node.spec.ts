@@ -1,4 +1,4 @@
-import { Cell } from "../../src/snake/cell";
+import { getEmptyCells } from "../../src/snake/cell";
 import { Node } from "../../src/snake/node";
 import { createBattlesnake, createGameState } from "../helpers/seeders";
 
@@ -68,8 +68,7 @@ describe("Node", () => {
         { x: 1, y: 0 },
       ]);
       const gameState = createGameState(snake);
-      const cell = new Cell();
-      const emptyCells = cell.getEmptyCells(gameState);
+      const emptyCells = getEmptyCells(gameState);
       const node = new Node({ x: 3, y: 1 });
 
       node.updateNumberOfReachableCells(gameState, emptyCells);

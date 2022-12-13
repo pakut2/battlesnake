@@ -1,19 +1,7 @@
-import { Test, TestingModule } from "@nestjs/testing";
-import { Cell } from "../../src/snake/cell";
-import { Move } from "../../src/snake/move";
+import { safestPath, shortestPath } from "../../src/snake/move";
 import { createBattlesnake, createGameState } from "../helpers/seeders";
 
 describe("Move", () => {
-  let move: Move;
-
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [Cell, Move],
-    }).compile();
-
-    move = module.get<Move>(Move);
-  });
-
   describe("shortestPath", () => {
     it("should successfully determine the shortest path to the target", () => {
       const foodLocation = { x: 3, y: 6 };
@@ -25,15 +13,15 @@ describe("Move", () => {
       ]);
       const gameState = createGameState(snake, { food: [foodLocation] });
 
-      const result = move.shortestPath({
+      const result = shortestPath({
         gameState,
         start: gameState.you.head,
         target: foodLocation,
       });
 
-      const { direction, shortestPath } = result;
+      const { direction, shortestPath: calculatedPath } = result;
       expect(direction).toEqual("right");
-      expect(shortestPath).toEqual([
+      expect(calculatedPath).toEqual([
         { x: 0, y: 3 },
         { x: 1, y: 3 },
         { x: 2, y: 3 },
@@ -56,15 +44,15 @@ describe("Move", () => {
       ]);
       const gameState = createGameState(snake, { food: [foodLocation] });
 
-      const result = move.shortestPath({
+      const result = shortestPath({
         gameState,
         start: gameState.you.head,
         target: foodLocation,
       });
 
-      const { direction, shortestPath } = result;
+      const { direction, shortestPath: calculatedPath } = result;
       expect(direction).toEqual("down");
-      expect(shortestPath[shortestPath.length - 1]).toEqual(foodLocation);
+      expect(calculatedPath[calculatedPath.length - 1]).toEqual(foodLocation);
     });
 
     it("should return undefined in an impossible situation (case 1)", () => {
@@ -86,7 +74,7 @@ describe("Move", () => {
       ]);
       const gameState = createGameState(snake, { food: [foodLocation] });
 
-      const result = move.shortestPath({
+      const result = shortestPath({
         gameState,
         start: gameState.you.head,
         target: foodLocation,
@@ -116,7 +104,7 @@ describe("Move", () => {
       ]);
       const gameState = createGameState(snake, { food: [...foodLocation] });
 
-      const result = move.shortestPath({
+      const result = shortestPath({
         gameState,
         start: gameState.you.head,
         target: foodLocation[0],
@@ -157,7 +145,7 @@ describe("Move", () => {
       ]);
       const gameState = createGameState(snake, { food: [...foodLocation] });
 
-      const result = move.shortestPath({
+      const result = shortestPath({
         gameState,
         start: gameState.you.head,
         target: foodLocation[1],
@@ -170,7 +158,7 @@ describe("Move", () => {
       const snake = createBattlesnake("snake", [{ x: 8, y: 8 }]);
       const gameState = createGameState(snake);
 
-      const result = move.shortestPath({
+      const result = shortestPath({
         gameState,
         start: gameState.you.head,
         target: gameState.you.head,
@@ -197,7 +185,7 @@ describe("Move", () => {
       ]);
       const gameState = createGameState(snake);
 
-      const result = move.safestPath(gameState);
+      const result = safestPath(gameState);
 
       expect(result).toEqual("left");
     });
@@ -219,7 +207,7 @@ describe("Move", () => {
       ]);
       const gameState = createGameState(snake);
 
-      const result = move.safestPath(gameState);
+      const result = safestPath(gameState);
 
       expect(result).toEqual("left");
     });

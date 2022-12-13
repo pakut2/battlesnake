@@ -1,12 +1,10 @@
 import { Injectable } from "@nestjs/common";
-import { Cell } from "./cell";
-import { Move } from "./move";
+import { closestCells } from "./cell";
+import { safestPath, shortestPath } from "./move";
 import { Coord, Direction, GameState, InfoResponse } from "./types/types";
 
 @Injectable()
 export class SnakeService {
-  constructor(private readonly cell: Cell, private readonly move: Move) {}
-
   public info(): InfoResponse {
     return {
       apiversion: "1",
@@ -23,25 +21,25 @@ export class SnakeService {
     if (availableFood.length) {
       return this.foodExistsStrategy(gameState, availableFood);
     } else {
-      return this.move.safestPath(gameState);
+      return safestPath(gameState);
     }
   }
 
   private foodExistsStrategy(gameState: GameState, availableFood: Coord[]): Direction {
     const snakeHead = gameState.you.head;
-    const closestFoodLocations = this.cell.closestCells(snakeHead, availableFood);
+    const closestFoodLocations = closestCells(snakeHead, availableFood);
 
     for (const food of closestFoodLocations) {
-      const path = this.move.shortestPath({ gameState, start: snakeHead, target: food });
+      const path = shortestPath({ gameState, start: snakeHead, target: food });
 
       if (!path) {
         continue;
       }
 
-      const { direction, shortestPath } = path;
-      const currentTarget = shortestPath[shortestPath.length - 1];
+      const { direction, shortestPath: calculatedPath } = path;
+      const currentTarget = calculatedPath[calculatedPath.length - 1];
       const nextTarget = closestFoodLocations.some((nextTarget) =>
-        this.move.shortestPath({ gameState, start: currentTarget, target: nextTarget }),
+        shortestPath({ gameState, start: currentTarget, target: nextTarget }),
       );
 
       if (nextTarget) {
@@ -49,6 +47,6 @@ export class SnakeService {
       }
     }
 
-    return this.move.safestPath(gameState);
+    return safestPath(gameState);
   }
 }
