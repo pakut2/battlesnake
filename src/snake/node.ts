@@ -53,7 +53,7 @@ export class Node {
     const move = new Move(new Cell());
 
     emptyCells.forEach((cell) => {
-      const path = move.shortestPath(gameState, this.location, cell);
+      const path = move.shortestPath({ gameState, start: this.location, target: cell });
 
       if (path) {
         this.reachableCells += 1;
