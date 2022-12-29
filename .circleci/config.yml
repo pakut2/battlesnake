@@ -35,15 +35,6 @@ commands:
           command: docker login -u $DOCKER_REGISTRY_USER -p $DOCKER_REGISTRY_KEY
 
 jobs:
-  build-project:
-    executor: node-docker
-    steps:
-      - checkout
-      - install-npm-dependencies
-      - run:
-          name: "Build project"
-          command: pnpm run build
-
   test:
     executor: node-docker
     steps:
@@ -71,9 +62,10 @@ workflows:
   version: 2
   main:
     jobs:
-      - build-project
       - test
       - build-image:
+          requires:
+            - test
           filters:
             branches:
               only:
