@@ -6,7 +6,7 @@ COPY package.json .
 COPY pnpm-lock.yaml .
 
 RUN npm install --global pnpm
-RUN pnpm install
+RUN pnpm install --production
 
 COPY . .
 
