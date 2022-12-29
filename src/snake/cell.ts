@@ -1,6 +1,5 @@
 import { isEqual } from "lodash";
-import { Borders, Coord, Direction, GameState } from "./types/types";
-import { manhattanDistance } from "./utils";
+import type { Borders, Coord, Direction, GameState } from "./types";
 
 export const getDirection = (baseCell: Coord, neighbourCoords: Coord): Direction => {
   if (isEqual(neighbourCoords, { x: baseCell.x, y: baseCell.y + 1 })) {
@@ -113,4 +112,8 @@ const getScannedRangeBorders = (gameState: GameState, scanRange: number): Border
   }
 
   return { topBorder, bottomBorder, rightBorder, leftBorder };
+};
+
+export const manhattanDistance = (coords1: Coord, coords2: Coord): number => {
+  return Math.abs(coords1.x - coords2.x) + Math.abs(coords1.y - coords2.y);
 };

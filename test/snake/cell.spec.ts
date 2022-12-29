@@ -6,8 +6,9 @@ import {
   getTakenCells,
   isCellBlocked,
   isCellInBounds,
+  manhattanDistance,
 } from "../../src/snake/cell";
-import { Coord } from "../../src/snake/types/types";
+import type { Coord } from "../../src/snake/types";
 import { createBattlesnake, createGameState } from "../helpers/seeders";
 
 describe("Cell", () => {
@@ -308,6 +309,14 @@ describe("Cell", () => {
         expect(cell.x).not.toBeGreaterThan(snakeBody[0].x + scanRange);
         expect(cell.x).not.toBeLessThan(snakeBody[0].x - scanRange);
       });
+    });
+  });
+
+  describe("manhattanDistance", () => {
+    it("should estimate distance correctly", () => {
+      const result = manhattanDistance({ x: 1, y: 1 }, { x: 3, y: 5 });
+
+      expect(result).toEqual(6);
     });
   });
 });

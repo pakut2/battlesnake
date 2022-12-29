@@ -1,4 +1,4 @@
-import { Coord, GameState } from "../types/types";
+import type { Coord, GameState } from "../types";
 
 export interface ShortestPathInterface {
   gameState: GameState;

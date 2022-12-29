@@ -1,9 +1,8 @@
 import { isEqual } from "lodash";
-import { containsCell, getDirection, getEmptyCells } from "./cell";
-import { ShortestPathInterface } from "./interface";
+import { containsCell, getDirection, getEmptyCells, manhattanDistance } from "./cell";
+import type { ShortestPathInterface } from "./interface";
 import { Node } from "./node";
-import { Direction, GameState, Path } from "./types/types";
-import { manhattanDistance } from "./utils";
+import type { Direction, GameState, Path } from "./types";
 
 export const shortestPath = ({ gameState, start, target }: ShortestPathInterface): Path => {
   if (isEqual(start, target)) {

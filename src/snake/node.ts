@@ -1,6 +1,6 @@
 import { getTakenCells, isCellBlocked, isCellInBounds } from "./cell";
 import { shortestPath } from "./move";
-import { Coord, GameState } from "./types/types";
+import type { Coord, GameState } from "./types";
 
 export class Node {
   public readonly location: Coord;

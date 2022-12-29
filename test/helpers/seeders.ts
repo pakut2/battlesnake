@@ -1,4 +1,4 @@
-import { Battlesnake, Coord, GameState } from "../../src/snake/types/types";
+import type { Battlesnake, Coord, GameState } from "../../src/snake/types";
 
 interface GameStateExtensions {
   enemySnakes: Battlesnake[];

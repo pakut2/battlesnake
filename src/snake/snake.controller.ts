@@ -1,6 +1,6 @@
 import { Body, Controller, Get, HttpCode, Post } from "@nestjs/common";
 import { SnakeService } from "./snake.service";
-import { GameState, InfoResponse, MoveResponse } from "./types/types";
+import type { GameState, InfoResponse, MoveResponse } from "./types";
 
 @Controller()
 export class SnakeController {

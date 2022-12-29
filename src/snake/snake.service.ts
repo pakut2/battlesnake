@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { closestCells } from "./cell";
 import { safestPath, shortestPath } from "./move";
-import { Coord, Direction, GameState, InfoResponse } from "./types/types";
+import type { Coord, Direction, GameState, InfoResponse } from "./types";
 
 @Injectable()
 export class SnakeService {
