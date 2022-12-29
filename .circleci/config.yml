@@ -7,26 +7,16 @@ executors:
     resource_class: small
 
 commands:
-  install-npm-dependencies:
-    description: 'Installs dependencies with pnpm'
+  install-dependencies:
+    description: 'Install dependencies with pnpm'
     steps:
       - run:
           name: Install pnpm
-          command: |
-            sudo npm install --global pnpm
-
-      - restore_cache:
-          keys:
-            - pnpm-packages-{{ checksum "pnpm-lock.yaml" }}
+          command: sudo npm install --global pnpm
 
       - run:
           name: Install Dependencies
-          command: pnpm install --frozen-lockfile
-
-      - save_cache:
-          key: pnpm-packages-{{ checksum "pnpm-lock.yaml" }}
-          paths:
-            - ~/.pnpm-store
+          command: pnpm install
 
   login-docker:
     description: "Log into Docker Hub"
@@ -39,12 +29,12 @@ jobs:
     executor: node-docker
     steps:
       - checkout
-      - install-npm-dependencies
+      - install-dependencies
       - run:
           name: "Run tests"
           command: pnpm run test
 
-  build-image:
+  deploy:
     executor: node-docker
     steps:
       - setup_remote_docker:
@@ -63,7 +53,7 @@ workflows:
   main:
     jobs:
       - test
-      - build-image:
+      - deploy:
           requires:
             - test
           filters:
